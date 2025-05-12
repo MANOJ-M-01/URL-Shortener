@@ -1,0 +1,28 @@
+services:
+  url-api:
+    build: .
+    container_name: url-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/shortener
+      BASE_URL: http://localhost:3000
+    volumes:
+      - .:/app
+    command: sh -c "npx prisma migrate deploy && npm run dev"
+
+  db:
+    image: postgres:16.6
+    container_name: url-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shortener
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
